@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+ plataforma:
+  build: .
+  restart: always
+  volumes:
+   - ./Servicos.db:/app
+  name: plataforma
+  ports:
+   - 3000:80
