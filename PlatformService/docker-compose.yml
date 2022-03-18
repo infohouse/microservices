@@ -6,6 +6,6 @@ services:
   restart: always
   volumes:
    - ./Servicos.db:/app
-  name: plataforma
+  container_name: plataforma
   ports:
    - 3000:80
