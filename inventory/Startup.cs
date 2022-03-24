@@ -2,9 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Catalog.Service.Entities;
 using Common.MongoDb;
-using Common.Settings;
+using inventory.Clients;
+using inventory.Entities;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -14,16 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using MongoDB.Bson;
-using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
-using MongoDB.Driver;
 
-namespace Catalog.Service
+namespace inventory
 {
     public class Startup
     {
-        private ServiceSettings serviceSettings;
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -35,25 +30,19 @@ namespace Catalog.Service
         public void ConfigureServices(IServiceCollection services)
         {
 
-            serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
-
             services.AddMongo()
-                .AddMongoRepository<Item>("items");
-
-            services.AddControllers(options => 
-            {
-                options.SuppressAsyncSuffixInActionNames = false;
+                .AddMongoRepository<InventoryItem>("inventoryitems");
+            
+            services.AddHttpClient<CatalogClient>(            
+            client => {
+                client.BaseAddress = new Uri("https://localhost:5001");
             });
-
+            
+            services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catalog.Service", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "inventory", Version = "v1" });
             });
-        }
-
-        private object IItemRepository(IServiceProvider arg)
-        {
-            throw new NotImplementedException();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -63,7 +52,7 @@ namespace Catalog.Service
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Catalog.Service v1"));
+                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "inventory v1"));
             }
 
             app.UseHttpsRedirection();

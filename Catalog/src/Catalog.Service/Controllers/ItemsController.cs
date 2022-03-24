@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Catalog.Service.Dtos;
 using Catalog.Service.Entities;
-using Catalog.Service.Repositories;
+using Common;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Service.Controllers
