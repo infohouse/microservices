@@ -3,8 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Catalog.Service.Entities;
+using Common.MassTransit;
 using Common.MongoDb;
+using Common.settings;
 using Common.Settings;
+using MassTransit;
+using MassTransit.Definition;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -38,8 +42,10 @@ namespace Catalog.Service
             serviceSettings = Configuration.GetSection(nameof(ServiceSettings)).Get<ServiceSettings>();
 
             services.AddMongo()
-                .AddMongoRepository<Item>("items");
+                .AddMongoRepository<Item>("items")
+                .AddMassTransitWithRabbitMq();
 
+            
             services.AddControllers(options => 
             {
                 options.SuppressAsyncSuffixInActionNames = false;

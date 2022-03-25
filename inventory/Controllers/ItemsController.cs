@@ -14,15 +14,16 @@ namespace inventory
     [Route("items")]
     public class ItemsController : ControllerBase
     {
-        private readonly IRepository<InventoryItem> itemsRepository;
-        private readonly CatalogClient catalogClient;
+        private readonly IRepository<InventoryItem> inventoryItemsRepository;
+        private readonly IRepository<CatalogItem> catalogitemsRepository;
+        
         public ItemsController(
-            IRepository<InventoryItem> itemsRepository,
-            CatalogClient catalogClient
+            IRepository<InventoryItem> inventoryItemsRepository,
+            IRepository<CatalogItem> catalogitemsRepository
         )
         {
-            this.itemsRepository = itemsRepository;
-            this.catalogClient = catalogClient;
+            this.inventoryItemsRepository = inventoryItemsRepository;
+            this.catalogitemsRepository = catalogitemsRepository;
         }
 
         [HttpGet]
@@ -33,15 +34,20 @@ namespace inventory
                 return BadRequest();
             }
 
-            var catalogItems = await catalogClient.GetCatalogItemsAsync();
-            var inventoryItemEntities = await itemsRepository.GetAllAsync(
+            //var catalogItems = await catalogClient.GetCatalogItemsAsync();
+            
+            var inventoryItemEntities = await inventoryItemsRepository.GetAllAsync(
                 item => item.UserId == userId
             );
+
+            var itemIds = inventoryItemEntities.Select(item => item.CatalogItemId);
+
+            var catalogItemEntities = await catalogitemsRepository.GetAllAsync(item => itemIds.Contains(item.Id));    
 
             var inventoryItemDtos = inventoryItemEntities.Select(
                 inventoryItem => 
             {
-                var catalogItem = catalogItems.Single(
+                var catalogItem = catalogItemEntities.Single(
                     catalogItem => catalogItem.Id == inventoryItem.CatalogItemId
                 );
 
@@ -57,7 +63,7 @@ namespace inventory
         [HttpPost]
         public async Task<ActionResult> PostAsync(GrantItemDto grantItemDto)
         {
-            var inventoryItem = await itemsRepository.GetAsync(
+            var inventoryItem = await inventoryItemsRepository.GetAsync(
                 item => item.UserId == grantItemDto.UserId 
                 && item.CatalogItemId == grantItemDto.CatalogItemId 
             );
@@ -72,12 +78,12 @@ namespace inventory
                     AcquiredDate = DateTimeOffset.UtcNow
                 };
 
-                await itemsRepository.CreateAsync(inventoryItem);
+                await inventoryItemsRepository.CreateAsync(inventoryItem);
             }
             else
             {
                 inventoryItem.Quantity += grantItemDto.Quantity;
-                await itemsRepository.UpdateAsync(inventoryItem);
+                await inventoryItemsRepository.UpdateAsync(inventoryItem);
             }
 
             return Ok();

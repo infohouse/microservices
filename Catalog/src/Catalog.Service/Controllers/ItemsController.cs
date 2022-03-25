@@ -5,6 +5,8 @@ using System.Threading.Tasks;
 using Catalog.Service.Dtos;
 using Catalog.Service.Entities;
 using Common;
+using Contracts;
+using MassTransit;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Catalog.Service.Controllers
@@ -15,18 +17,23 @@ namespace Catalog.Service.Controllers
     {
         
         public readonly IRepository<Item> itemsrepository;
+        public readonly IPublishEndpoint publishEndpoint;
 
-        public ItemsController(IRepository<Item> itemsrepository)
+
+        public ItemsController(IRepository<Item> itemsrepository, IPublishEndpoint publishEndpoint)
         {
             this.itemsrepository = itemsrepository; 
+            this.publishEndpoint = publishEndpoint;
         }
         
         [HttpGet]
-        public async Task<IEnumerable<ItemDto>> GetAsync()
+        public async Task<ActionResult<IEnumerable<ItemDto>>> GetAsync()
         {
+           
             var items = (await itemsrepository.GetAllAsync())
                         .Select(item => item.AsDto());
-            return items;
+
+            return Ok(items);
         }
 
         [HttpGet("{id}")]
@@ -52,6 +59,13 @@ namespace Catalog.Service.Controllers
             };
 
             await itemsrepository.CreateAsync(item);
+
+            await publishEndpoint.Publish(new CatlogItemCreated(
+                item.Id,
+                item.Name,
+                item.Description
+            ));
+
             return CreatedAtAction(nameof(GetByIdAsync), new {id = item.Id}, item);
         }
 
@@ -69,6 +83,12 @@ namespace Catalog.Service.Controllers
             
             await itemsrepository.UpdateAsync(existeItem);
 
+            await publishEndpoint.Publish(new CatlogItemUpdated(
+                existeItem.Id,
+                existeItem.Name,
+                existeItem.Description
+            ));
+
             return NoContent();
 
         }
@@ -80,7 +100,9 @@ namespace Catalog.Service.Controllers
             if(existeItem == null) return NotFound();
 
             await itemsrepository.RemoveAsync(existeItem.Id);
-            
+
+            await publishEndpoint.Publish(new CatlogItemDeleted(id));
+
             return NoContent();           ;
             
         }
