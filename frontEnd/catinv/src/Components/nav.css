@@ -1,0 +1,21 @@
+#ft > li > a {
+  
+    color: yellow;
+        
+}
+
+#ft > li > a:hover {
+  
+    color: white;
+    transform: translate(-2px, -3px);
+        
+}
+
+.navbar-dark .navbar-brand {
+    color: yellow;    
+}
+
+#brand:hover{
+    transform: translate(-2px, -3px);
+}
+

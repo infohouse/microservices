@@ -22,6 +22,20 @@ services:
    - rabbitmqdata:/var/lib/rabbitmq
   hostname: rabbitmq
 
+invetario:
+ build: ./inv
+ container_name: inventario
+ restart: always
+ ports:
+  - 8081:80
+
+catalogo
+ build: ./cat
+ container_name: catalogo
+ ports:
+  - 8080:80
+
+
 volumes:
  rabbitmqdata:
  mongodata:

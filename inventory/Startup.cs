@@ -43,6 +43,9 @@ namespace inventory
             
 
             services.AddControllers();
+
+            services.AddCors();
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "inventory", Version = "v1" });
@@ -56,7 +59,7 @@ namespace inventory
             services.AddHttpClient<CatalogClient>(
             client =>
             {
-                client.BaseAddress = new Uri("ip");
+                client.BaseAddress = new Uri("https://localhost:5001");
             }).AddTransientHttpErrorPolicy(builder => builder.Or<TimeoutRejectedException>().WaitAndRetryAsync(
                 5,
                 retryAttemp => TimeSpan.FromSeconds(Math.Pow(2, retryAttemp))
@@ -105,6 +108,8 @@ namespace inventory
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin());
 
             app.UseEndpoints(endpoints =>
             {
