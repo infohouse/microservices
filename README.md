@@ -7,15 +7,13 @@ http://150.230.81.241:3002/
 
 Projeto criado afim de aprimorar o aprendizado em microservices, utilizando no back-end, a linguagem dotnet core 5, banco de dado MongoDb e rabbitmq.
 
-Utiliazado reactJs como front-End.
+ReactJs como front-End.
 
 Recursos rodando em Docker, utilizando instância para testes.
 
 ## Referência
 
-Canal Julio Casal
-
-https://www.youtube.com/channel/UCw8aBxRvQ2ksWNFuO5eHdmA
+Canal youtube - Julio Casal
 
 ## Modelo
 ![Modelo](https://github.com/infohouse/microservices/blob/master/Modelo.PNG) 
