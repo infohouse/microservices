@@ -3,7 +3,7 @@
 
 ## Sobre o projeto
 
-http://150.230.81.241:3002/
+https://acpmsvc.netlify.app/
 
 Projeto criado afim de aprimorar o aprendizado em microservices, utilizando no back-end, a linguagem dotnet core 5, banco de dado MongoDb e rabbitmq.
 
