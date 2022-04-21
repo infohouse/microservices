@@ -11,10 +11,6 @@ ReactJs como front-End.
 
 Recursos rodando em Docker, utilizando instância para testes.
 
-## Referência
-
-Canal youtube - Julio Casal
-
 ## Modelo
 ![Modelo](https://github.com/infohouse/microservices/blob/master/Modelo.PNG) 
 
@@ -30,8 +26,8 @@ Canal youtube - Julio Casal
 
 ## Implantação em produção
 
-- Instância Ec2
-- docker (Criado 3, 1 para catalogo, 1 para inventário e para FrondEnd) 
+- Heroku rodando back-end
+- netlify rodando front-end 
 
 ## Como executar o projeto
 
@@ -65,3 +61,8 @@ npm start
 Adeilton
 
 https://www.linkedin.com/in/adeiton-carvalho-14021b31/
+
+
+## Referência
+
+Canal youtube - Julio Casal
